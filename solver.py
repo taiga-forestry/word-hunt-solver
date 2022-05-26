@@ -6,7 +6,7 @@ class Solver:
     def __init__(self, file_path):
         ''' Constructor for the Solver class '''
         
-        self.board = None
+        self.board =  [[0] * 4 for i in range(0, 4)]
         self.dictionary = self.fill_trie(file_path)
         self.solutions = [{} for i in range(0, 17)] # word length -> word -> list of paths
 
@@ -19,8 +19,6 @@ class Solver:
         letters (str) -- the letters of the Word Hunt Board
         '''
         
-        self.board = [[0] * 4 for i in range(0, 4)]
-
         for i in range(0, 4):
             for j in range(0, 4):
                 self.board[i][j] = letters[4 * i + j]
