@@ -17,8 +17,14 @@ class Solver:
         
         Parameters:
         letters (str) -- the letters of the Word Hunt Board
+
+        Exceptions:
+        (ValueError) -- raised if non-alphabetical characters are present
         '''
         
+        if True in [ord(letter) < 65 or ord(letter) > 90 for letter in letters]:
+            raise ValueError("only alphabetical characters allowed!")
+
         for i in range(0, 4):
             for j in range(0, 4):
                 self.board[i][j] = letters[4 * i + j]
@@ -38,9 +44,9 @@ class Solver:
         with open(file_path) as f:
             lines = f.readlines()
             dictionary = trie.Trie()
-
+            
             for line in lines:
-                dictionary.add(line.strip().upper())
+                dictionary.add(line.strip())
 
             return dictionary
 
@@ -102,7 +108,7 @@ class Solver:
 
 if __name__ == "__main__":
     solver = Solver("ENGLISH_DICT_2.txt")
-    letters = input("WH> input the game board as one string, no spaces: ").upper()
+    letters = input("Word Hunt Solver> input the game board as one string, no spaces: ").upper()
 
     while letters != "QUIT":
         try:
@@ -112,4 +118,4 @@ if __name__ == "__main__":
         except:
             print("invalid input, try again!")
         
-        letters = input("WH> input the game board as one string, no spaces: ").upper()
+        letters = input("Word Hunt Solver> input the game board as one string, no spaces: ").upper()
