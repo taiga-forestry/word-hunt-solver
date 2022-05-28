@@ -52,7 +52,7 @@ class Trie:
             if letter not in curr_node.children:
                 return False
             
-            curr_node.children[letter]
+            curr_node = curr_node.children[letter]
         
         if curr_node.is_word == True:
             curr_node.is_word = False
