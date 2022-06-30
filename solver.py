@@ -1,3 +1,4 @@
+from re import A
 import trie
 
 class Solver:
@@ -6,9 +7,9 @@ class Solver:
     def __init__(self, file_path):
         ''' Constructor for the Solver class '''
         
-        self.board =  [[0] * 4 for i in range(0, 4)]
+        self.board = [[0] * 4 for i in range(0, 4)]
         self.dictionary = self.fill_trie(file_path)
-        self.solutions = [{} for i in range(0, 17)] # word length -> word -> list of paths
+        self.solutions = {} # word length -> word -> one possible path
 
 
     def fill_board(self, letters: str):
@@ -22,9 +23,11 @@ class Solver:
         (ValueError) -- raised if non-alphabetical characters are present
         '''
         
+        letters = letters.upper()
+        
         if True in [ord(letter) < 65 or ord(letter) > 90 for letter in letters]:
             raise ValueError("only alphabetical characters allowed!")
-
+    
         for i in range(0, 4):
             for j in range(0, 4):
                 self.board[i][j] = letters[4 * i + j]
@@ -75,8 +78,8 @@ class Solver:
             return
         else:
             if len(curr_word) >= 3 and self.dictionary.contains(curr_word, False):
-                self.solutions[len(curr_word)].setdefault(curr_word, []).append(tuple(visited))
-                
+                self.solutions.setdefault(len(curr_word), {})[curr_word] = [4 * pos[0] + pos[1] for pos in visited]
+
             new_word = curr_word + self.board[i][j]
             new_visited = visited.copy() + [(i, j)]
 
@@ -97,7 +100,7 @@ class Solver:
         for i in range(15, -1, -1):
             if len(self.solutions[i]) > 0 and i >= 4:
                 for key in self.solutions[i]:
-                    print(key + ":", self.solutions[i][key][0])
+                    print(key + ":", self.solutions[i][key])
 
         self.solutions = [{} for i in range(0, 17)] # reset solutions
 
@@ -107,7 +110,7 @@ class Solver:
 ###############################################################
 
 if __name__ == "__main__":
-    solver = Solver("ENGLISH_DICT_2.txt")
+    solver = Solver("ENGLISH_DICT.txt")
     letters = input("Word Hunt Solver> input the game board as one string, no spaces: ").upper()
 
     while letters != "QUIT":
