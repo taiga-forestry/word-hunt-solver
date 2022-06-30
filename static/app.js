@@ -9,7 +9,7 @@ const clearBoard = () => {
 
 const solveBoard = () => {
     const letters = parseLetters();
-    const url = window.location.href + '/solutions?letters=' + letters;
+    const url = window.location.href + 'solutions?letters=' + letters;
 
     fetch(url)
         .then((response) => { return response.json() })
