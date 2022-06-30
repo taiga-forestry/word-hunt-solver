@@ -18,6 +18,6 @@ def solutions():
     
     return jsonify(wh_solver.solutions)
 
+
 if __name__ == "__main__":
-    app.debug = True
     app.run()
