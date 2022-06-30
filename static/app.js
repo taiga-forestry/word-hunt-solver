@@ -14,7 +14,7 @@ const solveBoard = () => {
     fetch(url)
         .then((response) => { return response.json() })
         .then((data) => { processSolutions(data) })
-        .catch((e) => { console.log(e) });
+        .catch((error) => { console.log(error) });
 }
 
 const parseLetters = () => {
