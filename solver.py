@@ -9,6 +9,7 @@ class Solver:
         self.board = [[0] * 4 for i in range(0, 4)]
         self.dictionary = self.fill_trie(file_path)
         self.solutions = {} # word length -> word -> one possible path
+        self.visited = []
 
 
     def fill_board(self, letters: str):
@@ -58,10 +59,10 @@ class Solver:
 
         for i in range(0, 4):
             for j in range(0, 4):
-                self.solve_from(i, j, "", [])
+                self.solve_from(i, j, "")
 
 
-    def solve_from(self, i: int, j: int, curr_word: str, visited: "list[(int, int)]"):
+    def solve_from(self, i: int, j: int, curr_word: str):
         ''' 
         Solves the given Word Hunt board starting from a given position
 
@@ -69,35 +70,39 @@ class Solver:
         i (int) -- vertical position on the board
         j (int) -- horizontal position on the board
         curr_word (str) -- word created so far
-        visited (list[(int, int)]) -- list of positions as tuples visited so far
         '''
 
         # position is off the board, position has been visited already, or trie does not contain this subword
-        if i < 0 or j < 0 or i > 3 or j > 3 or (i, j) in visited or not self.dictionary.contains(curr_word, True):
+        if i < 0 or j < 0 or i > 3 or j > 3 or self.board[i][j] == "*" or not self.dictionary.contains(curr_word, True):
             return
         else:
-            if len(curr_word) >= 3 and self.dictionary.contains(curr_word, False):
-                self.solutions.setdefault(len(curr_word), {})[curr_word] = [4 * pos[0] + pos[1] for pos in visited]
+            curr_letter = self.board[i][j]
+            new_word = curr_word + curr_letter
+            self.board[i][j] = "*"
+            self.visited.append((i, j))
 
-            new_word = curr_word + self.board[i][j]
-            new_visited = visited.copy() + [(i, j)]
+            if len(new_word) >= 3 and self.dictionary.contains(new_word, False):
+                self.solutions.setdefault(len(new_word), {})[new_word] = [4 * pos[0] + pos[1] for pos in self.visited]
 
             # solve the board in every direction 
-            self.solve_from(i - 1, j - 1, new_word, new_visited)
-            self.solve_from(i - 1, j, new_word, new_visited)
-            self.solve_from(i - 1, j + 1, new_word, new_visited)
-            self.solve_from(i, j - 1, new_word, new_visited)
-            self.solve_from(i, j + 1, new_word, new_visited)
-            self.solve_from(i + 1, j - 1, new_word, new_visited)
-            self.solve_from(i + 1, j, new_word, new_visited)
-            self.solve_from(i + 1, j + 1, new_word, new_visited)
+            self.solve_from(i - 1, j - 1, new_word)
+            self.solve_from(i - 1, j, new_word)
+            self.solve_from(i - 1, j + 1, new_word)
+            self.solve_from(i, j - 1, new_word)
+            self.solve_from(i, j + 1, new_word)
+            self.solve_from(i + 1, j - 1, new_word)
+            self.solve_from(i + 1, j, new_word)
+            self.solve_from(i + 1, j + 1, new_word)
+
+            self.board[i][j] = curr_letter
+            self.visited.pop()
 
 
     def display_solutions(self):
         ''' Displays all solutions to the Word Hunt board '''
 
         for i in range(15, -1, -1):
-            if len(self.solutions[i]) > 0 and i >= 4:
+            if i in self.solutions and len(self.solutions[i]) > 0 and i >= 4:
                 for key in self.solutions[i]:
                     print(key + ":", self.solutions[i][key])
 
